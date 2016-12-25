@@ -17,18 +17,22 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
+  //server-side event emitter
+  socket.emit('newMessage', {
+    from: 'testUser',
+    text: 'test new message',
+    createAt: new Date()
+  });
+
+  //server-side custom event listener
+  socket.on('createMessage', (createMessage) => {
+    console.log('createMessage', createMessage);
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
 });
-
-// io.on('disconnect', () => {
-//   console.log('Client disconnected');
-// });
-
-// app.get('/', () => {
-//   res.render('index.html');
-// });
 
 //use server instead of app.listen
 server.listen(port, () => {
