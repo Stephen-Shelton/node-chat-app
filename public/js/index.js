@@ -4,11 +4,11 @@ var socket = io(); //initiate request
 socket.on('connect', function () {
   console.log('Connected to server');
 
-  //client-side event emitter
-  socket.emit('createMessage', {
-    from: 'creatorOfMessage@create.com',
-    text: 'sample for newly created message'
-  });
+  // //client-side event emitter
+  // socket.emit('createMessage', {
+  //   from: 'creatorOfMessage@create.com',
+  //   text: 'sample for newly created message'
+  // });
 });
 
 //client-side custom event listener, data sent by emitter is arg for cb

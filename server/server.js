@@ -17,16 +17,23 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  //server-side event emitter
-  socket.emit('newMessage', {
-    from: 'testUser',
-    text: 'test new message',
-    createAt: new Date()
-  });
+  // //server-side event emitter, socket.emit emits event to a single cxn
+  // socket.emit('newMessage', {
+  //   from: 'testUser',
+  //   text: 'test new message',
+  //   createAt: new Date()
+  // });
 
   //server-side custom event listener
-  socket.on('createMessage', (createMessage) => {
-    console.log('createMessage', createMessage);
+  socket.on('createMessage', (message) => {
+    console.log('createMessage', message);
+
+    //io.emit emits an event to every single connection
+    io.emit('newMessage', {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    });
   });
 
   socket.on('disconnect', () => {
