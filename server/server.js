@@ -18,26 +18,23 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  //emit msg to the individual user that joined
+  //emit msg to the individual user/cxn that joined
   socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+
   //emit msg to all other users
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user Joined'));
 
-  // //server-side event emitter, socket.emit emits event to a single cxn
-  // socket.emit('newMessage', {
-  //   from: 'testUser',
-  //   text: 'test new message',
-  //   createAt: new Date()
-  // });
-
   //server-side custom event listener
-  socket.on('createMessage', (message) => {
+  socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);
 
     // io.emit emits an event to every single connection
     io.emit('newMessage', generateMessage(message.from, message.text));
 
-    // //broadcast.emit, emit to everyone except the emitting user
+    //acknowledgement callback, tells client that server processed the event
+    callback('This is from the server');
+
+    // //broadcast.emit, emit to all except the emitting user
     // socket.broadcast.emit('newMessage', {
     //   from: message.from,
     //   text: message.text,
