@@ -17,6 +17,19 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
+  //emit msg to the individual user that joined
+  socket.emit('newMessage', {
+    text: 'Welcome to the chat app',
+    from: 'Admin',
+    createdAt: new Date().getTime()
+  });
+  //emit msg to all other users
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New user joined',
+    createdAt: new Date().getTime()
+  });
+
   // //server-side event emitter, socket.emit emits event to a single cxn
   // socket.emit('newMessage', {
   //   from: 'testUser',
@@ -28,12 +41,19 @@ io.on('connection', (socket) => {
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
 
-    //io.emit emits an event to every single connection
+    // io.emit emits an event to every single connection
     io.emit('newMessage', {
       from: message.from,
       text: message.text,
       createdAt: new Date().getTime()
     });
+
+    // //broadcast.emit, emit to everyone except the emitting user
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // });
   });
 
   socket.on('disconnect', () => {
