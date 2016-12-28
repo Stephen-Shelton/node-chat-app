@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
     io.emit('newMessage', generateMessage(message.from, message.text));
 
     //acknowledgement callback, tells client that server processed the event
-    callback('This is from the server');
+    callback();
 
     // //broadcast.emit, emit to all except the emitting user
     // socket.broadcast.emit('newMessage', {
