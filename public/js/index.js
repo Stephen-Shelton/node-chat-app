@@ -12,18 +12,20 @@ socket.on('disconnect', function () {
 //client-side custom event listener, data sent by emitter is arg for cb
 socket.on('newMessage', function (message) {
   console.log('newMessage', message);
+  var formattedTime = moment(message.createdAt).format('h:mm a');
   //create element then append it to DOM
   var li = jQuery('<li></li>');
-  li.text(`${message.from}: ${message.text}`);
+  li.text(`${message.from} ${formattedTime}: ${message.text}`);
   jQuery('#messages').append(li); //add to end of element
 });
 
 socket.on('newLocationMessage', function (message) {
+  var formattedTime = moment(message.createdAt).format('h:mm a');
   var li = jQuery('<li></li>');
   //target="_blank" attribute tells browser to open up link in new tab instead of current tab, which would kick you out of the chat room.
   var a = jQuery('<a target="_blank">My Current Location</a>');
   //use li.text and a.attr to prevent xss
-  li.text(`${message.from}: `);
+  li.text(`${message.from} ${formattedTime}: `);
   a.attr('href', message.url);
   li.append(a);
   jQuery('#messages').append(li);
