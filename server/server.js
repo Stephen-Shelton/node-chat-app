@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
   //emit msg to the individual user/cxn that joined
   socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-  //emit msg to all other users
+  //emit msg to all other users, i.e. excludes user/cxn that just joined
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user Joined'));
 
   //server-side custom event listener
@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
     console.log('createMessage', message);
 
     // io.emit emits an event to every single connection
+    // generate message and send to 'newMessage' event listener
     io.emit('newMessage', generateMessage(message.from, message.text));
 
     //acknowledgement callback, tells client that server processed the event

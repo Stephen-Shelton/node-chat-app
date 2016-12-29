@@ -10,32 +10,59 @@ socket.on('disconnect', function () {
 });
 
 //client-side custom event listener, data sent by emitter is arg for cb
+//takes message sent by emitter and appends it to client/DOM
 socket.on('newMessage', function (message) {
-  console.log('newMessage', message);
+  //Old way to append to DOM with just jQuery
+  // console.log('newMessage', message);
+  // var formattedTime = moment(message.createdAt).format('h:mm a');
+  // //create element then append it to DOM
+  // var li = jQuery('<li></li>');
+  // li.text(`${message.from} ${formattedTime}: ${message.text}`);
+  // jQuery('#messages').append(li); //add to end of element
+
+  //Newer method to append to DOM with Mustache template and jQuery
   var formattedTime = moment(message.createdAt).format('h:mm a');
-  //create element then append it to DOM
-  var li = jQuery('<li></li>');
-  li.text(`${message.from} ${formattedTime}: ${message.text}`);
-  jQuery('#messages').append(li); //add to end of element
+  var template = jQuery('#message-template').html();
+  var html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
+
+  jQuery('#messages').append(html);
 });
 
 socket.on('newLocationMessage', function (message) {
+  //Old way to append to DOM with just jQuery
+  // var formattedTime = moment(message.createdAt).format('h:mm a');
+  // var li = jQuery('<li></li>');
+  // //target="_blank" attribute tells browser to open up link in new tab instead of current tab, which would kick you out of the chat room.
+  // var a = jQuery('<a target="_blank">My Current Location</a>');
+  // //use li.text and a.attr to prevent xss
+  // li.text(`${message.from} ${formattedTime}: `);
+  // a.attr('href', message.url);
+  // li.append(a);
+  // jQuery('#messages').append(li);
+
+  //Newer method to append to DOM with Mustache template and jQuery
   var formattedTime = moment(message.createdAt).format('h:mm a');
-  var li = jQuery('<li></li>');
-  //target="_blank" attribute tells browser to open up link in new tab instead of current tab, which would kick you out of the chat room.
-  var a = jQuery('<a target="_blank">My Current Location</a>');
-  //use li.text and a.attr to prevent xss
-  li.text(`${message.from} ${formattedTime}: `);
-  a.attr('href', message.url);
-  li.append(a);
-  jQuery('#messages').append(li);
+  var template = jQuery('#location-message-template').html();
+  var html = Mustache.render(template, {
+    url: message.url,
+    from: message.from,
+    createdAt: formattedTime
+  });
+
+  jQuery('#messages').append(html);
 });
 
+//Collect text from message-form to then create message object/data
 jQuery('#message-form').on('submit', function (e) {
-  //preventDefault prevents page from refreshing and attaching text to query string
+  //preventDefault prevents page from refreshing and attaching text to query string, which is default bx
   e.preventDefault();
   var messageTextbox = jQuery('[name=message]');
 
+  //Create object from text and send to 'createMessage' event listener
   socket.emit('createMessage', {
     from: 'User',
     text: messageTextbox.val()
