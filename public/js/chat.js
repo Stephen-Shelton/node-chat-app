@@ -15,7 +15,8 @@ function scrollToBotton() {
   var lastMessageHeight = newMessage.prev().innerHeight(); //2nd-to-last msg
 
   if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
-    //if user scrolled to bottom, client automatically keeps scrolling to bottom as new messages come in. If scrolled to top or middle and scrollHeight > clientHeight, client does NOT auto scroll to bottom
+    //if user scrolled to bottom or very close to bottom, client automatically keeps scrolling to bottom as new messages come in.
+    //If scrolled to top or somewhere middle and scrollHeight > clientHeight, client does NOT auto scroll to bottom.
     messages.scrollTop(scrollHeight);
   }
 }
