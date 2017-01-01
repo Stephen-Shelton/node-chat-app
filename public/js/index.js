@@ -1,5 +1,25 @@
 var socket = io(); //initiate client-side socket
 
+//implement automatic scrolling functionality
+function scrollToBotton() {
+  //selectors
+  var messages = jQuery('#messages');
+  var newMessage = messages.children('li:last-child');
+
+  //heights
+  //.prop gives cross-browser way to fetch a property, it's shorthand jQuery without using jQuery() to fetch a prop, works across all browsers
+  var clientHeight = messages.prop('clientHeight'); //h of client's browser
+  var scrollTop = messages.prop('scrollTop'); //h to scroll back to top
+  var scrollHeight = messages.prop('scrollHeight'); //total h
+  var newMessageHeight = newMessage.innerHeight(); //h for newest msg
+  var lastMessageHeight = newMessage.prev().innerHeight(); //2nd-to-last msg
+
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    //if user scrolled to bottom, client automatically keeps scrolling to bottom as new messages come in. If scrolled to top or middle and scrollHeight > clientHeight, client does NOT auto scroll to bottom
+    messages.scrollTop(scrollHeight);
+  }
+}
+
 //don't use arrow functions client-side, inconsistent support from browsers outside of chrome
 socket.on('connect', function () {
   console.log('Connected to server');
@@ -30,6 +50,7 @@ socket.on('newMessage', function (message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBotton();
 });
 
 socket.on('newLocationMessage', function (message) {
@@ -54,6 +75,7 @@ socket.on('newLocationMessage', function (message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBotton();
 });
 
 //Collect text from message-form to then create message object/data
