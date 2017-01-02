@@ -108,7 +108,6 @@ jQuery('#message-form').on('submit', function (e) {
 
   //Create object from text and send to 'createMessage' event listener
   socket.emit('createMessage', {
-    from: 'User',
     text: messageTextbox.val()
   }, function() {
     messageTextbox.val('');

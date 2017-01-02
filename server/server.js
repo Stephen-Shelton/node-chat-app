@@ -44,11 +44,12 @@ io.on('connection', (socket) => {
 
   //server-side custom event listener
   socket.on('createMessage', (message, callback) => {
-    console.log('createMessage', message);
-
-    // io.emit emits an event to every single connection
-    // generate message and send to 'newMessage' event listener
-    io.emit('newMessage', generateMessage(message.from, message.text));
+    var user = users.getUser(socket.id);
+    if (user && isRealString(message.text)) {
+      // io.emit emits an event to every single connection
+      // generate message and send to 'newMessage' event listener
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
 
     //acknowledgement callback, tells client that server processed the event
     callback();
@@ -62,7 +63,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    var user = users.getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+    }
   });
 
   socket.on('disconnect', () => {
