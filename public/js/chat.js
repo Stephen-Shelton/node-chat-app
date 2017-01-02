@@ -24,10 +24,31 @@ function scrollToBotton() {
 //don't use arrow functions client-side, inconsistent support from browsers outside of chrome
 socket.on('connect', function () {
   console.log('Connected to server');
+  var params = jQuery.deparam(window.location.search);
+
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  });
 });
 
 socket.on('disconnect', function () {
   console.log('Disconnected from server');
+});
+
+socket.on('updateUserList', function (users) {
+  console.log('Users list', users);
+  var ol = jQuery('<ol></ol>');
+  users.forEach(function (user) {
+    var li = jQuery('<li></li>').text(user);
+    ol.append(li);
+    //use html and not append bc we want to wipe the list then re-render it
+    jQuery('#users').html(ol);
+  });
 });
 
 //client-side custom event listener, data sent by emitter is arg for cb
