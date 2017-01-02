@@ -1,4 +1,3 @@
-//join method of path takes partial paths and joins them together
 const path = require('path');
 const http = require('http');
 const express = require('express');
@@ -8,6 +7,7 @@ const {generateMessage, generateLocationMessage} = require('./utils/message.js')
 const {isRealString} = require('./utils/validation.js');
 const {Users} = require('./utils/users.js');
 
+//join method of path takes partial paths and joins them together
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
@@ -50,16 +50,8 @@ io.on('connection', (socket) => {
       // generate message and send to 'newMessage' event listener
       io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
     }
-
     //acknowledgement callback, tells client that server processed the event
     callback();
-
-    // //broadcast.emit, emit to all except the emitting user
-    // socket.broadcast.emit('newMessage', {
-    //   from: message.from,
-    //   text: message.text,
-    //   createdAt: new Date().getTime()
-    // });
   });
 
   socket.on('createLocationMessage', (coords) => {
